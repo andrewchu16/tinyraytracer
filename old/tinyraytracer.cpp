@@ -163,11 +163,11 @@ int main() {
 
     std::vector<Sphere> spheres;
     spheres.push_back(Sphere(vec3(-3,    0,   -16), 2,      ivory));
-    spheres.push_back(Sphere(vec3(-1.0, -1.5, -12), 2,     glass));
-    spheres.push_back(Sphere(vec3( 1.5, -0.5, -18), 3,  red_rubber));
+    spheres.push_back(Sphere(vec3(-1.0, -1.5, -12), 2,      glass));
+    spheres.push_back(Sphere(vec3( 1.5, -0.5, -18), 3, red_rubber));
     spheres.push_back(Sphere(vec3( 7,    5,   -18), 4,     mirror));
 
-    std::vector<Light>  lights;
+    std::vector<Light> lights;
     lights.push_back(Light(vec3(-20, 20,  20), 1.5));
     lights.push_back(Light(vec3( 30, 50, -25), 1.8));
     lights.push_back(Light(vec3( 30, 20,  30), 1.7));
