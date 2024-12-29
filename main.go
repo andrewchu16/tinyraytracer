@@ -9,6 +9,7 @@ import (
 	"os"
 	. "tinyraytracer/geometry"
 	"tinyraytracer/postprocess"
+	"time"
 )
 
 const (
@@ -66,28 +67,36 @@ func save(bufp *[][]Vec3) {
 }
 
 func main() {
+	start := time.Now()
+
 	buf := make([][]Vec3, HEIGHT)
 	for i := range buf {
 		buf[i] = make([]Vec3, WIDTH)
 	}
 
-	for y := range HEIGHT {
-		for x := range WIDTH {
-			buf[y][x] = NewVec3(0, 0, 0)
-		}
-	}
+	fmt.Println("Initialize buffer took:", time.Since(start))
+	fmt.Println()
 
 	// Render the scene
+	start = time.Now()
 	fmt.Println("Rendering scene...")
 	render(&buf)
+	fmt.Println("Rendering took:", time.Since(start))
+	fmt.Println()
 
 	// Post-process the image
-	fmt.Println("Post-processing image...")
+	start = time.Now()
+	fmt.Println("Processing image...")
 	process(&buf)
+	fmt.Println("Processing took:", time.Since(start))
+	fmt.Println()
 
 	// Save the image
+	start = time.Now()
 	fmt.Println("Saving image...")
 	save(&buf)
+	fmt.Println("Saving took:", time.Since(start))
+	fmt.Println()
 
 	fmt.Println("Done!")
 }

@@ -12,17 +12,15 @@ func BoxBlur(bufp *[][]Vec3, blurWidth int) {
 	height := len(buf)
 	width := len((*bufp)[0])
 
-    copyBuf := make([][]Vec3, height)
-    for i := range copyBuf {
-        copyBuf[i] = make([]Vec3, width)
+    newBuf := make([][]Vec3, height)
+    for i := range newBuf {
+        newBuf[i] = make([]Vec3, width)
     }
 
     for y := range height {
         for x := range width {
             // Blur the image
-            r := 0.0
-            g := 0.0
-            b := 0.0
+            newCol := NewVec3(0, 0, 0)
 
             count := 0
             for j := -blurWidth; j <= blurWidth; j++ {
@@ -31,21 +29,17 @@ func BoxBlur(bufp *[][]Vec3, blurWidth int) {
                     ny := y + j
 
                     if nx >= 0 && nx < width && ny >= 0 && ny < height {
-                        r += buf[ny][nx].X
-                        g += buf[ny][nx].Y
-                        b += buf[ny][nx].Z
+                        newCol.Add(buf[ny][nx])
                         count++
                     }
                 }
             }
 
-            r /= float64(count)
-            g /= float64(count)
-            b /= float64(count)
+            newCol.Div(float64(count))
 
-            copyBuf[y][x] = NewVec3(r, g, b)
+            newBuf[y][x] = newCol
         }
     }
 
-    *bufp = copyBuf
+    *bufp = newBuf
 }
