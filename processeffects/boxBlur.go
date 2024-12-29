@@ -1,10 +1,10 @@
-package postprocess
+package processeffects
 
-import . "tinyraytracer/geometry"
+import "tinyraytracer/geometry"
 
-func BoxBlur(bufp *[][]Vec3, blurWidth int) {
+func BoxBlur(bufp *[][]geometry.Vec3, blurWidth int) *[][]geometry.Vec3 {
 	if blurWidth <= 0 {
-		return
+		return bufp
 	}
 
     buf := *bufp
@@ -12,15 +12,15 @@ func BoxBlur(bufp *[][]Vec3, blurWidth int) {
 	height := len(buf)
 	width := len((*bufp)[0])
 
-    newBuf := make([][]Vec3, height)
+    newBuf := make([][]geometry.Vec3, height)
     for i := range newBuf {
-        newBuf[i] = make([]Vec3, width)
+        newBuf[i] = make([]geometry.Vec3, width)
     }
 
     for y := range height {
         for x := range width {
             // Blur the image
-            newCol := NewVec3(0, 0, 0)
+            newCol := geometry.NewVec3(0, 0, 0)
 
             count := 0
             for j := -blurWidth; j <= blurWidth; j++ {
@@ -41,5 +41,5 @@ func BoxBlur(bufp *[][]Vec3, blurWidth int) {
         }
     }
 
-    *bufp = newBuf
+    return &newBuf
 }

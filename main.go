@@ -8,7 +8,7 @@ import (
 	"math"
 	"os"
 	. "tinyraytracer/geometry"
-	"tinyraytracer/postprocess"
+	"tinyraytracer/processeffects"
 	"time"
 )
 
@@ -32,7 +32,7 @@ func render(bufp *[][]Vec3) {
 }
 
 func process(bufp *[][]Vec3) {
-    postprocess.BoxBlur(bufp, 5)
+    *bufp = *processeffects.BoxBlur(bufp, 2)
 }
 
 func save(bufp *[][]Vec3) {
