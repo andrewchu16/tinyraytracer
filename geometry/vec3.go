@@ -65,6 +65,10 @@ func (v *Vec3) Dot(v2 Vec3) float64 {
     return v.X*v2.X + v.Y*v2.Y + v.Z*v2.Z
 }
 
+func Dot(v1, v2 *Vec3) float64 {
+	return v1.X*v2.X + v1.Y*v2.Y + v1.Z*v2.Z
+}
+
 func (v *Vec3) Neg() {
     v.X = -v.X
     v.Y = -v.Y
@@ -75,6 +79,10 @@ func (v *Vec3) Length() float64 {
 	return math.Sqrt(v.Dot(*v))
 }
 
+func (v *Vec3) SqrLength() float64 {
+	return v.Dot(*v)
+}
+
 func (v *Vec3) Normalize() {
 	v.Div(v.Length())
 }
@@ -83,6 +91,10 @@ func (v Vec3) Normal() Vec3 {
 	v.Normalize()
 
 	return v
+}
+
+func (v *Vec3) IsNormalized() bool {
+	return math.Abs(v.SqrLength()-1) < 0.00001
 }
 
 func (v *Vec3) Copy() Vec3 {
