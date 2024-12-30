@@ -59,7 +59,7 @@ func TestVec4Normalize(t *testing.T) {
     length := v.Length()
     expected := float64(1)
 
-    if length != expected {
+    if math.Abs(length-expected) > 1e-9 {
         t.Errorf("Normalize(%v) failed: got length %f, want %f", v, length, expected)
     }
 }

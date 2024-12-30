@@ -56,7 +56,7 @@ func (v *Vec4) Length() float64 {
 	return math.Sqrt(v.Dot(*v))
 }
 
-func (v Vec4) Normalize() {
+func (v *Vec4) Normalize() {
 	v.Div(v.Length())
 }
 
