@@ -27,10 +27,18 @@ func (v *Vec3) Add(v2 Vec3) {
     v.Z += v2.Z
 }
 
+func Add(v1, v2 *Vec3) Vec3 {
+	return Vec3{v1.X + v2.X, v1.Y + v2.Y, v1.Z + v2.Z}
+}
+
 func (v *Vec3) Sub(v2 Vec3) {
     v.X -= v2.X
     v.Y -= v2.Y
     v.Z -= v2.Z
+}
+
+func Sub(v1, v2 *Vec3) Vec3 {
+	return Vec3{v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z}
 }
 
 func (v *Vec3) Mul(scalar float64) {
@@ -39,13 +47,21 @@ func (v *Vec3) Mul(scalar float64) {
     v.Z *= scalar
 }
 
+func Mul(v1 *Vec3, scalar float64) Vec3 {
+	return Vec3{v1.X * scalar, v1.Y * scalar, v1.Z * scalar}
+}
+
 func (v *Vec3) Div(scalar float64) {
     v.X /= scalar
     v.Y /= scalar
     v.Z /= scalar
 }
 
-func (v Vec3) Dot(v2 Vec3) float64 {
+func Div(v1 *Vec3, scalar float64) Vec3 {
+	return Vec3{v1.X / scalar, v1.Y / scalar, v1.Z / scalar}
+}
+
+func (v *Vec3) Dot(v2 Vec3) float64 {
     return v.X*v2.X + v.Y*v2.Y + v.Z*v2.Z
 }
 
@@ -55,12 +71,18 @@ func (v *Vec3) Neg() {
     v.Z = -v.Z
 }
 
-func (v Vec3) Length() float64 {
-	return math.Sqrt(v.Dot(v))
+func (v *Vec3) Length() float64 {
+	return math.Sqrt(v.Dot(*v))
 }
 
-func (v Vec3) Normalize() {
+func (v *Vec3) Normalize() {
 	v.Div(v.Length())
+}
+
+func (v Vec3) Normal() Vec3 {
+	v.Normalize()
+
+	return v
 }
 
 func (v *Vec3) Copy() Vec3 {
