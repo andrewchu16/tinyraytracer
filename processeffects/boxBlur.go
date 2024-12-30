@@ -5,7 +5,7 @@ import (
     "sync"
 )
 
-func BoxBlur(bufp *[][]geometry.Color, blurWidth int) *[][]geometry.Color {
+func BoxBlur(bufp *[][]geometry.Vec3, blurWidth int) *[][]geometry.Vec3 {
 	if blurWidth <= 0 {
 		return bufp
 	}
@@ -21,11 +21,11 @@ func BoxBlur(bufp *[][]geometry.Color, blurWidth int) *[][]geometry.Color {
     }
 
     var wg sync.WaitGroup
-    for y := 0; y < height; y++ {
+    for y := range height {
         wg.Add(1)
         go func(y int) {
             defer wg.Done()
-            for x := 0; x < width; x++ {
+            for x := range width {
                 newCol := geometry.NewVec3(0, 0, 0)
                 count := 0
                 for j := -blurWidth; j <= blurWidth; j++ {

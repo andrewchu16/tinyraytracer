@@ -7,7 +7,7 @@ import (
 	"image/png"
 	"math"
 	"os"
-	. "tinyraytracer/geometry"
+	"tinyraytracer/geometry"
 	"tinyraytracer/processeffects"
 	"time"
 )
@@ -18,7 +18,7 @@ const (
 	IMG_NAME = "output.png"
 )
 
-func render(bufp *[][]Vec3) {
+func render(bufp *[][]geometry.Vec3) {
     buf := *bufp
 	for y := range HEIGHT {
 		for x := range WIDTH {
@@ -26,16 +26,16 @@ func render(bufp *[][]Vec3) {
 			g := 0.0
 			b := math.Round(float64(y) / 64) * 64 / float64(HEIGHT)
 
-            buf[y][x] = NewVec3(r, g, b)
+            buf[y][x] = geometry.NewVec3(r, g, b)
 		}
 	}
 }
 
-func process(bufp *[][]Vec3) {
-    *bufp = *processeffects.BoxBlur(bufp, 2)
+func process(bufp *[][]geometry.Vec3) {
+    *bufp = *processeffects.BoxBlur(bufp, 1)
 }
 
-func save(bufp *[][]Vec3) {
+func save(bufp *[][]geometry.Vec3) {
     buf := *bufp
 	img := image.NewRGBA(image.Rect(0, 0, WIDTH, HEIGHT))
 
@@ -66,37 +66,32 @@ func save(bufp *[][]Vec3) {
 	}
 }
 
-func main() {
+func timeIt(f func(), name string) {
 	start := time.Now()
+	fmt.Print(name, "...")
+	f()
+	fmt.Println(time.Since(start))
+}
 
-	buf := make([][]Vec3, HEIGHT)
-	for i := range buf {
-		buf[i] = make([]Vec3, WIDTH)
-	}
+func main() {
+	// Initialize buffer
+	var buf [][]geometry.Vec3
 
-	fmt.Println("Initialize buffer took:", time.Since(start))
-	fmt.Println()
+	timeIt(func() { 
+		buf = make([][]geometry.Vec3, HEIGHT)
+		for i := range buf {
+			buf[i] = make([]geometry.Vec3, WIDTH)
+		}
+	}, "Initialize buffer")
 
 	// Render the scene
-	start = time.Now()
-	fmt.Println("Rendering scene...")
-	render(&buf)
-	fmt.Println("Rendering took:", time.Since(start))
-	fmt.Println()
+	timeIt(func() { render(&buf) }, "Rendering scene")
 
 	// Post-process the image
-	start = time.Now()
-	fmt.Println("Processing image...")
-	process(&buf)
-	fmt.Println("Processing took:", time.Since(start))
-	fmt.Println()
+	timeIt(func() { process(&buf) }, "Processing image")
 
 	// Save the image
-	start = time.Now()
-	fmt.Println("Saving image...")
-	save(&buf)
-	fmt.Println("Saving took:", time.Since(start))
-	fmt.Println()
+	timeIt(func() { save(&buf) }, "Saving image")
 
 	fmt.Println("Done!")
 }
