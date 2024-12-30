@@ -5,26 +5,29 @@ import (
 	"image"
 	"image/color"
 	"image/png"
+	"math"
 	"os"
 	"tinyraytracer/geometry"
 	"tinyraytracer/scene"
 )
 
 type Camera struct {
-	width int
-	height int
+	width   int
+	height  int
+	fov     int
 	imgName string
-	Buf [][]geometry.Vec3
-	scene *scene.Scene
+	Buf     [][]geometry.Vec3
+	scene   *scene.Scene
 }
 
-func NewCamera(width, height int, imgName string) *Camera {
+func NewCamera(width, height int, fov int, imgName string) *Camera {
 	return &Camera{
-		width: width,
-		height: height,
+		width:   width,
+		height:  height,
+		fov:     fov,
 		imgName: imgName,
-		Buf: nil,
-		scene: nil,
+		Buf:     nil,
+		scene:   nil,
 	}
 }
 
@@ -37,6 +40,34 @@ func (c *Camera) Init() {
 
 func (c *Camera) SetScene(scene *scene.Scene) {
 	c.scene = scene
+}
+
+func (c *Camera) Render() {
+	for j := range c.height {
+		for i := range c.width {
+			x := (2.0 * (float64(i) + 0.5) / float64(c.width) - 1.0) * math.Tan(float64(c.fov)/2.0) * float64(c.width) / float64(c.height)
+			y := -(2.0 * (float64(j) + 0.5) / float64(c.height) - 1.0) * math.Tan(float64(c.fov)/2.0)
+
+			orig := geometry.ZERO_VEC3.Copy()
+			dir := geometry.NewVec3(x, y, -1).Normal()
+			ray := scene.NewRay(&orig, &dir)
+
+			color := c.scene.CastRay(&ray)
+
+			// Normalize color to 1
+			maxColorChannel := math.Max(color.X, math.Max(color.Y, color.Z))
+
+			if maxColorChannel > 1 {
+				color.Div(maxColorChannel)
+
+				// color.X = math.Min(1, color.X)
+				// color.Y = math.Min(1, color.Y)
+				// color.Z = math.Min(1, color.Z)
+			}
+
+			c.Buf[j][i] = color
+		}
+	}
 }
 
 func (c *Camera) Save() {
