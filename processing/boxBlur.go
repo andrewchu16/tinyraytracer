@@ -1,4 +1,4 @@
-package processeffects
+package processing
 
 import (
     "tinyraytracer/geometry"
