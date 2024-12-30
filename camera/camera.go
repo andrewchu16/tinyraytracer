@@ -7,6 +7,7 @@ import (
 	"image/png"
 	"math"
 	"os"
+	"sync"
 	"tinyraytracer/geometry"
 	"tinyraytracer/scene"
 )
@@ -43,31 +44,39 @@ func (c *Camera) SetScene(scene *scene.Scene) {
 }
 
 func (c *Camera) Render() {
+	var wg sync.WaitGroup
 	for j := range c.height {
-		for i := range c.width {
-			x := (2.0 * (float64(i) + 0.5) / float64(c.width) - 1.0) * math.Tan(float64(c.fov)/2.0) * float64(c.width) / float64(c.height)
-			y := -(2.0 * (float64(j) + 0.5) / float64(c.height) - 1.0) * math.Tan(float64(c.fov)/2.0)
+		wg.Add(1)
+		go func(j int) {
+			defer wg.Done()
 
-			orig := geometry.ZERO_VEC3.Copy()
-			dir := geometry.NewVec3(x, y, -1).Normal()
-			ray := scene.NewRay(&orig, &dir)
+			for i := range c.width {
+				x := (2.0*(float64(i)+0.5)/float64(c.width) - 1.0) * math.Tan(float64(c.fov)/2.0) * float64(c.width) / float64(c.height)
+				y := -(2.0*(float64(j)+0.5)/float64(c.height) - 1.0) * math.Tan(float64(c.fov)/2.0)
 
-			color := c.scene.CastRay(&ray)
+				orig := geometry.ZERO_VEC3.Copy()
+				dir := geometry.NewVec3(x, y, -1).Normal()
+				ray := scene.NewRay(&orig, &dir)
 
-			// Normalize color to 1
-			maxColorChannel := math.Max(color.X, math.Max(color.Y, color.Z))
+				color := c.scene.CastRay(&ray)
 
-			if maxColorChannel > 1 {
-				color.Div(maxColorChannel)
+				// Normalize color to 1
+				maxColorChannel := math.Max(color.X, math.Max(color.Y, color.Z))
 
-				// color.X = math.Min(1, color.X)
-				// color.Y = math.Min(1, color.Y)
-				// color.Z = math.Min(1, color.Z)
+				if maxColorChannel > 1 {
+					color.Div(maxColorChannel)
+
+					// color.X = math.Min(1, color.X)
+					// color.Y = math.Min(1, color.Y)
+					// color.Z = math.Min(1, color.Z)
+				}
+
+				c.Buf[j][i] = color
 			}
-
-			c.Buf[j][i] = color
-		}
+		}(j)
 	}
+
+	wg.Wait()
 }
 
 func (c *Camera) Save() {

@@ -11,13 +11,13 @@ import (
 )
 
 const (
-	WIDTH    = 1024
-	HEIGHT   = 768
+	WIDTH    = 1024 * 2
+	HEIGHT   = 768 * 2
 	IMG_NAME = "output.png"
 )
 
 func process(camera *camera.Camera) {
-	camera.Buf = *processing.BoxBlur(&camera.Buf, 0)
+	camera.Buf = *processing.BoxBlur(&camera.Buf, 1)
 }
 
 func timeIt(f func(), name string) {
