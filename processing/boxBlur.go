@@ -13,7 +13,7 @@ func BoxBlur(bufp *[][]geometry.Vec3, blurWidth int) *[][]geometry.Vec3 {
     buf := *bufp
 
 	height := len(buf)
-	width := len((*bufp)[0])
+	width := len(buf[0])
 
     newBuf := make([][]geometry.Vec3, height)
     for i := range newBuf {

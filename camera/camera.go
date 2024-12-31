@@ -39,6 +39,12 @@ func (c *Camera) Init() {
 	}
 }
 
+func (c *Camera) SetBuf(buf [][]geometry.Vec3) {
+	c.Buf = buf
+	c.height = len(buf)
+	c.width = len(buf[0])
+}
+
 func (c *Camera) SetScene(scene *scene.Scene) {
 	c.scene = scene
 }
